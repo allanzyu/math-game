@@ -26,12 +26,25 @@ class GameGui:
         self.main_frame = tk.Frame(self.root)
         self.file_io = tk.Frame(self.root)
 
-        # Initialize label widget to display welcome message
+######### Initialize user answer entry field
+        # Event handler - wipe entry field when clicked on
+        def clear_label(event):
+            self.ent_answer.delete(0, tk.END)
+        # Event handler - assign user input to __answer
+        def get_answer(event):
+            self.__answer = self.ent_answer.get()
+            self.ent_answer.delete(0, tk.END)
+        self.ent_answer = tk.Entry(self.main_frame)
+        self.ent_answer.insert(0,'Enter answer here')
+        self.ent_answer.bind("<Button-1>", clear_label)
+        self.ent_answer.bind("<Return>", get_answer)
+
+####### Initialize label widget to display welcome message, main method to communicate with user
         self.lbl_string = tk.StringVar()
         self.lbl_string.set('Welcome to Math Game!')
-        self.lbl_out = tk.Label(self.root, textvariable = self.lbl_string)
+        self.lbl_out = tk.Label(self.main_frame, textvariable = self.lbl_string)
 
-        # Set up buttons that generate math questions
+####### Set up buttons that generate math questions
         self.btn_addition = tk.Button(self.btn_math_questions, text = '+',command = self.btn_addition)
         self.btn_subtraction = tk.Button(self.btn_math_questions, text = '-', command = self.btn_subtraction)
         self.btn_multiplication = tk.Button(self.btn_math_questions, text = 'x', command = self.btn_multiplication)
@@ -42,18 +55,6 @@ class GameGui:
         self.btn_multiplication.grid(row = 0, column = 2,ipadx=15, ipady=5, sticky = 'nsew')
         self.btn_division.grid(row = 0, column = 3,ipadx=15, ipady=5, sticky = 'nsew')
 
-        ### Initialize user answer entry field ###
-        # Event handler - wipe entry field when clicked on
-        def clear_label(event):
-            self.ent_answer.delete(0, tk.END)
-        # Event handler - assign user input to __answer
-        def get_answer(event):
-            self.__answer = self.ent_answer.get()
-            self.ent_answer.delete(0, tk.END)
-        self.ent_answer = tk.Entry(self.root)
-        self.ent_answer.insert(0,'Enter answer here')
-        self.ent_answer.bind("<Button-1>", clear_label)
-        self.ent_answer.bind("<Return>", get_answer)
 
         # pack dat shit
         self.lbl_out.pack()
@@ -62,7 +63,7 @@ class GameGui:
 
         tk.mainloop()
 
-    ### Addition question button
+####### Addition question button
     def btn_addition(self):
         problem = Addition()
         self.lbl_string.set(problem.question)
