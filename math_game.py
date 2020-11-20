@@ -114,7 +114,7 @@ class GameGui:
         self.lbl_string.set(problem.question)
         self.__solution = problem.solution
 """
-# Addition question object
+Addition Question Class
    Generates a random addition problem of 2 int addends
    between 1 and 10 when instantiated
  2 Attributes:
