@@ -21,16 +21,26 @@ class GameGui:
         self.root = tk.Tk()
         self.root.title('Math Game!')
 
+        # Create frames
+        self.btn_math_questions = tk.Frame(self.root)
+        self.main_frame = tk.Frame(self.root)
+        self.file_io = tk.Frame(self.root)
+
         # Initialize label widget to display welcome message
         self.lbl_string = tk.StringVar()
         self.lbl_string.set('Welcome to Math Game!')
         self.lbl_out = tk.Label(self.root, textvariable = self.lbl_string)
 
-        # Initialize buttons
-        self.btn_addition = tk.Button(self.root, text = '+',command = self.btn_addition)
-        self.btn_subtraction = tk.Button(self.root, text = '-', command = self.btn_subtraction)
-        self.btn_multiplication = tk.Button(self.root, text = 'x', command = self.btn_multiplication)
-        self.btn_division = tk.Button(self.root, text = '/', command = self.btn_division)
+        # Set up buttons that generate math questions
+        self.btn_addition = tk.Button(self.btn_math_questions, text = '+',command = self.btn_addition)
+        self.btn_subtraction = tk.Button(self.btn_math_questions, text = '-', command = self.btn_subtraction)
+        self.btn_multiplication = tk.Button(self.btn_math_questions, text = 'x', command = self.btn_multiplication)
+        self.btn_division = tk.Button(self.btn_math_questions, text = '/', command = self.btn_division)
+        # pack and configure buttons within frame
+        self.btn_addition.grid(row = 0, column = 0,ipadx=15, ipady=5, sticky = 'nsew')
+        self.btn_subtraction.grid(row = 0, column = 1,ipadx=15, ipady=5, sticky = 'nsew')
+        self.btn_multiplication.grid(row = 0, column = 2,ipadx=15, ipady=5, sticky = 'nsew')
+        self.btn_division.grid(row = 0, column = 3,ipadx=15, ipady=5, sticky = 'nsew')
 
         ### Initialize user answer entry field ###
         # Event handler - wipe entry field when clicked on
@@ -48,10 +58,7 @@ class GameGui:
         # pack dat shit
         self.lbl_out.pack()
         self.ent_answer.pack()
-        self.btn_addition.pack()
-        self.btn_subtraction.pack()
-        self.btn_multiplication.pack()
-        self.btn_division.pack()
+        self.btn_math_questions.pack()
 
         tk.mainloop()
 
