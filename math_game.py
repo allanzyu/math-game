@@ -61,17 +61,34 @@ class GameGui:
         self.btn_multiplication = tk.Button(self.btn_math_questions, text = 'x', command = self.btn_multiplication)
         self.btn_division = tk.Button(self.btn_math_questions, text = '/', command = self.btn_division)
         # placing and configuring buttons within frame
-        self.btn_addition.grid(row = 0, column = 0,ipadx=15, ipady=5, sticky = 'nsew')
-        self.btn_subtraction.grid(row = 0, column = 1,ipadx=15, ipady=5, sticky = 'nsew')
-        self.btn_multiplication.grid(row = 0, column = 2,ipadx=15, ipady=5, sticky = 'nsew')
-        self.btn_division.grid(row = 0, column = 3,ipadx=15, ipady=5, sticky = 'nsew')
+        self.btn_addition.grid(row = 0, column = 0,ipadx=25, ipady=5, sticky = 'nsew')
+        self.btn_subtraction.grid(row = 0, column = 1,ipadx=25, ipady=5, sticky = 'nsew')
+        self.btn_multiplication.grid(row = 0, column = 2,ipadx=25, ipady=5, sticky = 'nsew')
+        self.btn_division.grid(row = 0, column = 3,ipadx=25, ipady=5, sticky = 'nsew')
+
+####### Set up buttons for reading and saving player profiles
+        self.btn_read = tk.Button(self.file_io, text = 'Read Saved', width = 10, command = self.btn_read)
+        self.btn_write = tk.Button(self.file_io, text = 'Save Game', width = 10, command = self.btn_write)
+        # place buttons within file_io frame
+        self.btn_read.pack(ipadx = 20)
+        self.btn_write.pack(ipadx = 20)
 
 ####### placing the frames
-        self.main_frame.grid(row = 0, column = 0, sticky = 'w')
+        self.main_frame.grid(row = 0, column = 0, padx = 20, pady = 20 ,sticky = 'w')
         self.btn_math_questions.grid(row = 1, column = 0, sticky = 'sw')
+        self.file_io.grid(row = 0, column = 1,sticky = 'e')
 
 ####### Main tkinter Loop
         tk.mainloop()
+
+### Read Save button
+    def btn_read(self):
+        self.lbl_string.set("What is your name?")
+
+### Write Save button
+    def btn_write(self):
+        self.lbl_string.set("What is your name?")
+
 
 ### Addition question button
     def btn_addition(self):
