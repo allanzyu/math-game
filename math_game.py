@@ -23,14 +23,15 @@ class GameGui:
     def __init__(self):
         self.__solution = 0 # Initialize solution to problem
         self.__userInput = 0   # Initialize user input for answer
-        self.__entryFlag = 0 # Initialize behavior of entry widget. \
-                             # 0 = profile/name set\
-                             # 1 = math questions\
-                             # 2 = prompt user to choose an option
+        self.__entryFlag = 0    # Initialize behavior of entry widget. \
+                                # 0 = profile/name set
+                                # 1 = math questions
+                                # 2 = load profile
+                                # 3 = unexpected inputs
         self.__player = Player()
         self.__playerDictionary = {}
 
-        self.load_file() #load player.dat on startup
+        self.load_file() #load players.dat on startup
 
 ####### Create root window widget
         self.root = tk.Tk()
@@ -55,19 +56,22 @@ class GameGui:
         def clear_label(event):
             self.ent_answer.delete(0, tk.END)
         # Event handler - assign user input to __answer. Behavior changes due to the following flags:
-        # 0 = profile/name set\
-        # 1 = math questions\
+        # 0 = profile/name set
+        # 1 = math questions
+        # 2 = load profile
         # 3 = unexpected inputs
         def get_answer(event):
-            self.__userInput = self.ent_answer.get()
-            self.ent_answer.delete(0, tk.END)
+            self.__userInput = str(self.ent_answer.get()) # get input
+            self.ent_answer.delete(0, tk.END) # clear input widget
 
             if self.__entryFlag == 0:
-                self.__player.name = self.__userInput
-                """
-                try to load pickled profile
-                """
-                self.lbl_string.set('Welcome, ' + self.__player.name)
+                if self.__userInput in self.__playerDictionary:
+                    self.__player = self.__playerDictionary[self.__userInput]
+                else:
+                    self.__player = Player(self.__userInput)
+                    self.__playerDictionary[self.__userInput] = self.__player                 
+                self.lbl_string.set('Welcome, ' + self.__player.name + '. Select a math problem below.')
+                self.lbl_scoreBoard.set('user: '+ self.__player.name + '     score: ' + str(self.__player.score))
                 self.enable_buttons()
                 self.__entryFlag = 3
 
@@ -82,17 +86,35 @@ class GameGui:
                 else:
                     self.lbl_string.set('Wrong!')
                     self.__player.wrong()
+                    self.lbl_scoreBoard.set('user: '+ self.__player.name + '     score: ' + str(self.__player.score))
                     self.enable_buttons()
                     self.__entryFlag = 3
 
             elif self.__entryFlag == 2:
-                self.__player = Player(self.__userInput)
-                """
-                try to load pickled profile
-                """
+                if self.__userInput in self.__playerDictionary:
+                    self.__player = self.__playerDictionary[self.__userInput]
+                    self.lbl_string.set('Welcome, ' + self.__player.name)
+                    self.lbl_scoreBoard.set('user: '+ self.__player.name + '     score: ' + str(self.__player.score))
+                    self.enable_buttons()
+                else:
+                    self.lbl_string.set('Profile not found')
+                    self.enable_buttons()
 
             elif self.__entryFlag == 3:
                 self.lbl_string.set('Input not expected, please select an option') #TODO: disable entry widget
+
+            elif self.__entryFlag == 4:
+                if self.__userInput in self.__playerDictionary:
+                    self.lbl_string.set('Player already exists')
+                    self.__entryFlag = 3
+                    self.enable_buttons()
+                else:
+                    self.__player = Player(self.__userInput)    
+                    self.__playerDictionary[self.__userInput] = self.__player  
+                    self.lbl_string.set('Welcome, ' + self.__player.name + '. Select a math problem below.')
+                    self.lbl_scoreBoard.set('user: '+ self.__player.name + '     score: ' + str(self.__player.score))
+                    self.enable_buttons()
+                    self.__entryFlag = 3
 
         # initialize entry widget
         self.ent_answer = tk.Entry(self.main_frame)
@@ -104,10 +126,10 @@ class GameGui:
         self.ent_answer.grid(row = 1, column = 0, sticky = 'w')
 
 ####### Set up buttons that generate math questions
-        self.btn_addition = tk.Button(self.btn_math_questions, text = '+',command = self.btn_addition)
-        self.btn_subtraction = tk.Button(self.btn_math_questions, text = '-', command = self.btn_subtraction)
-        self.btn_multiplication = tk.Button(self.btn_math_questions, text = 'x', command = self.btn_multiplication)
-        self.btn_division = tk.Button(self.btn_math_questions, text = '/', command = self.btn_division)
+        self.btn_addition = tk.Button(self.btn_math_questions, text = 'Addition',command = self.btn_addition)
+        self.btn_subtraction = tk.Button(self.btn_math_questions, text = 'Subtraction', command = self.btn_subtraction)
+        self.btn_multiplication = tk.Button(self.btn_math_questions, text = 'Multiplication', command = self.btn_multiplication)
+        self.btn_division = tk.Button(self.btn_math_questions, text = 'Division', command = self.btn_division)
         # placing and configuring buttons within frame
         self.btn_addition.grid(row = 0, column = 0,ipadx=25, ipady=5, sticky = 'nsew')
         self.btn_subtraction.grid(row = 0, column = 1,ipadx=25, ipady=5, sticky = 'nsew')
@@ -115,12 +137,14 @@ class GameGui:
         self.btn_division.grid(row = 0, column = 3,ipadx=25, ipady=5, sticky = 'nsew')
 
 ####### Set up buttons for file management (load, save, see all, quit)
-        self.btn_read = tk.Button(self.file_io, text = 'Read Saved', width = 10, command = self.btn_read)
+        self.btn_new = tk.Button(self.file_io, text = 'New Player', width = 10, command = self.btn_new)
+        self.btn_load = tk.Button(self.file_io, text = 'Load Profile', width = 10, command = self.btn_load)
         self.btn_write = tk.Button(self.file_io, text = 'Save Game', width = 10, command = self.btn_write)
-        self.btn_all = tk.Button(self.file_io, text = 'See All', width = 10)
+        self.btn_all = tk.Button(self.file_io, text = 'See All', width = 10, command = self.btn_all)
         self.btn_quit = tk.Button(self.file_io, text = 'Quit', width = 10, command = self.btn_quit)
         # place buttons within file_io frame
-        self.btn_read.pack(ipadx = 20)
+        self.btn_new.pack(ipadx = 20)
+        self.btn_load.pack(ipadx = 20)
         self.btn_write.pack(ipadx = 20)
         self.btn_all.pack(ipadx = 20)
         self.btn_quit.pack(ipadx = 20)
@@ -140,7 +164,8 @@ class GameGui:
         self.btn_subtraction['state'] = 'disabled'
         self.btn_multiplication['state'] = 'disabled'
         self.btn_division['state'] = 'disabled'
-        self.btn_read['state'] = 'disabled'
+        self.btn_new['state'] = 'disabled'
+        self.btn_load['state'] = 'disabled'
         self.btn_write['state'] = 'disabled'
         self.btn_all['state'] = 'disabled'
 
@@ -149,26 +174,44 @@ class GameGui:
         self.btn_subtraction['state'] = 'normal'
         self.btn_multiplication['state'] = 'normal'
         self.btn_division['state'] = 'normal'
-        self.btn_read['state'] = 'normal'
+        self.btn_new['state'] = 'normal'
+        self.btn_load['state'] = 'normal'
         self.btn_write['state'] = 'normal'
         self.btn_all['state'] = 'normal'
 
-### Read Save button
-    def btn_read(self):
+### New Player button
+    def btn_new(self):
         self.lbl_string.set("What is your name?")
+        self.__entryFlag = 4
+        self.disable_buttons()
+
+### Read Save button
+    def btn_load(self):
+        self.lbl_string.set("What is your name?")
+        self.__entryFlag = 2
         self.disable_buttons()
 
 ### Write Save button
     def btn_write(self):
         # Save profile in dictionary and pickle
-        self.__playerDictionary = {self.__player.name,self.__player}
+        self.__playerDictionary[self.__userInput] = self.__player  
         output_file = open('players.dat','wb')
         pickle.dump(self.__playerDictionary, output_file)
         output_file.close()
         self.lbl_string.set("Profile saved")
 
+### See All users
+    def btn_all(self):
+        outString = ''
+        #for entry in self.__playerDictionary:
+        tk.messagebox.showinfo(' ')
+        
 ### Quit
     def btn_quit(self):
+        self.__playerDictionary[self.__userInput] = self.__player  
+        output_file = open('players.dat','wb')
+        pickle.dump(self.__playerDictionary, output_file)
+        output_file.close()
         self.root.destroy()
 
 ### Addition question button
@@ -203,6 +246,7 @@ class GameGui:
         self.disable_buttons()
         self.__entryFlag = 1
 
+### Check if user input matches solution
     def is_true(self,userInput):
         errorFlag = True
         while (errorFlag):
@@ -214,8 +258,8 @@ class GameGui:
             except:
                 self.lbl_string.set("something went wrong")
 
-    # load profile.dat, creates .dat if it doesn't exist
-    def load_file(self, file = 'profile.dat'):
+### load players.dat, creates .dat if it doesn't exist
+    def load_file(self, file = 'players.dat'):
         try:
             inputFile = open(file,'rb')
             self.__playerDictionary = pickle.load(inputFile)
