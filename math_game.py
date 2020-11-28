@@ -30,6 +30,8 @@ class GameGui:
         self.__player = Player()
         self.__playerDictionary = {}
 
+        self.load_file() #load player.dat on startup
+
 ####### Create root window widget
         self.root = tk.Tk()
         self.root.title('Math Game!')
@@ -45,7 +47,6 @@ class GameGui:
         self.lbl_out = tk.Label(self.main_frame, textvariable = self.lbl_string)
         self.lbl_out.grid(row = 0, column = 0, sticky = 'w')
         self.lbl_scoreBoard = tk.StringVar()
-        self.lbl_scoreBoard.set('user: '+ self.__player.name + ' score: ' + str(self.__player.score))
         self.lbl_scoreOut = tk.Label(self.main_frame, textvariable = self.lbl_scoreBoard)
         self.lbl_scoreOut.grid(row = 2, column = 0, sticky = 'w')
 
@@ -75,6 +76,7 @@ class GameGui:
                 if (self.is_true(self.__userInput)):
                     self.lbl_string.set('Correct!')
                     self.__player.correct()
+                    self.lbl_scoreBoard.set('user: '+ self.__player.name + '     score: ' + str(self.__player.score))
                     self.enable_buttons()
                     self.__entryFlag = 3
                 else:
@@ -211,6 +213,17 @@ class GameGui:
                     return False
             except:
                 self.lbl_string.set("something went wrong")
+
+    # load profile.dat, creates .dat if it doesn't exist
+    def load_file(self, file = 'profile.dat'):
+        try:
+            inputFile = open(file,'rb')
+            self.__playerDictionary = pickle.load(inputFile)
+            inputFile.close()
+        except:
+            outputFile = open(file,'wb')
+            pickle.dump(self.__playerDictionary, outputFile)
+            outputFile.close()
 
 """
 Addition Question Class
