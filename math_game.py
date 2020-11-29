@@ -16,6 +16,7 @@ Contains
 """
 
 import tkinter as tk
+import tkinter.messagebox
 import random
 import pickle
 
@@ -28,6 +29,7 @@ class GameGui:
                                 # 1 = math questions
                                 # 2 = load profile
                                 # 3 = unexpected inputs
+                                # 4 = new player creation
         self.__player = Player()
         self.__playerDictionary = {}
 
@@ -60,6 +62,7 @@ class GameGui:
         # 1 = math questions
         # 2 = load profile
         # 3 = unexpected inputs
+        # 4 = new player creation
         def get_answer(event):
             self.__userInput = str(self.ent_answer.get()) # get input
             self.ent_answer.delete(0, tk.END) # clear input widget
@@ -69,7 +72,7 @@ class GameGui:
                     self.__player = self.__playerDictionary[self.__userInput]
                 else:
                     self.__player = Player(self.__userInput)
-                    self.__playerDictionary[self.__userInput] = self.__player                 
+                    self.__playerDictionary[self.__player.name] = self.__player                 
                 self.lbl_string.set('Welcome, ' + self.__player.name + '. Select a math problem below.')
                 self.lbl_scoreBoard.set('user: '+ self.__player.name + '     score: ' + str(self.__player.score))
                 self.enable_buttons()
@@ -90,6 +93,7 @@ class GameGui:
                     self.enable_buttons()
                     self.__entryFlag = 3
 
+            # This if statement handles loading profiles, loads if profile exists
             elif self.__entryFlag == 2:
                 if self.__userInput in self.__playerDictionary:
                     self.__player = self.__playerDictionary[self.__userInput]
@@ -100,9 +104,11 @@ class GameGui:
                     self.lbl_string.set('Profile not found')
                     self.enable_buttons()
 
+            # This if statement handles all cases when input is not expected
             elif self.__entryFlag == 3:
                 self.lbl_string.set('Input not expected, please select an option') #TODO: disable entry widget
 
+            # This if statement handles new player creation, only creates new if player doesn't already exist
             elif self.__entryFlag == 4:
                 if self.__userInput in self.__playerDictionary:
                     self.lbl_string.set('Player already exists')
@@ -194,7 +200,8 @@ class GameGui:
 ### Write Save button
     def btn_write(self):
         # Save profile in dictionary and pickle
-        self.__playerDictionary[self.__userInput] = self.__player  
+        del self.__playerDictionary[self.__player.name]
+        self.__playerDictionary[self.__player.name] = self.__player  
         output_file = open('players.dat','wb')
         pickle.dump(self.__playerDictionary, output_file)
         output_file.close()
@@ -203,12 +210,21 @@ class GameGui:
 ### See All users
     def btn_all(self):
         outString = ''
-        #for entry in self.__playerDictionary:
-        tk.messagebox.showinfo(' ')
+        for entry in self.__playerDictionary:
+            profile = self.__playerDictionary[entry]
+            if profile.total > 0:
+                rawPercentScore = 100*profile.score/profile.total
+                percentScore = '{:.2f}'.format(rawPercentScore)
+            else:
+                percentScore = "N/A"
+            outString = outString + "Name: " + profile.name + \
+                        "    Score: " + str(profile.score) + \
+                        "    Percent Correct: " + percentScore + '%\n'
+        tkinter.messagebox.showinfo('All Players',outString)
         
 ### Quit
     def btn_quit(self):
-        self.__playerDictionary[self.__userInput] = self.__player  
+        self.__playerDictionary[self.__player.name] = self.__player  
         output_file = open('players.dat','wb')
         pickle.dump(self.__playerDictionary, output_file)
         output_file.close()
@@ -362,7 +378,7 @@ class Player:
 
     @property
     def total(self):
-        return self.__total
+        return self.__totalQuestions
 
     @total.setter
     def total(self,total):
