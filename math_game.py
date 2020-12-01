@@ -7,12 +7,15 @@ Created on Tue Nov 17 20:43:53 2020
 Midterm - Math Game
 
 Contains
-    GameGui:    Primary class that will be used to launch game.
-                Launches game window when instance is created.           
-    Addition:       Main math problem class for addition problems
-    Subtraction:    Subclass of Addition, subtraction problems
-    Multiplication: Subclass of Addition, multiplication problems
-    Divison:        Subclass of Addition, division problems
+    GameGui:        Primary class that will be used to launch game.
+                    Launches game window when instance is created.
+    Base:           Superclass that contains getters and setters for
+                    math problem subclasses.
+    Addition:       Subclass of Base, addition problems
+    Subtraction:    Subclass of Base, subtraction problems
+    Multiplication: Subclass of Base, multiplication problems
+    Divison:        Subclass of Base, division problems
+    Player:         Class that contains player attributes
 """
 
 import tkinter as tk
@@ -285,17 +288,10 @@ class GameGui:
             pickle.dump(self.__playerDictionary, outputFile)
             outputFile.close()
 
-"""
-Addition Question Class
-   Generates a random addition problem of 2 int addends
-   between 1 and 10 when instantiated
- 2 Attributes:
-   __question
-   __solution
- 1 Method:
-   new_prob
-"""
-class Addition:
+
+# Base class contains setters and getters for 
+# subclass math problems.
+class Base:
     def __init__(self):
         self._question = 'foo'
         self._solution = 0
@@ -317,15 +313,18 @@ class Addition:
     def solution(self, solution):
         self._solution = solution
 
+# Addition is a subclass of Base
+# Generates a random subtraction problem with int solution > 0
+class Addition(Base):
     def new_prob(self):
         A = random.randint(1,10)
         B = random.randint(1,10)
         self._question = (str(A)+" + "+str(B)+" = ?") #generates string version of problem
         self._solution = A + B #generates correct answer
 
-# Subtraction question object is a subclass of Addition
+# Subtraction is a subclass of Base
 # Generates a random subtraction problem with int solution > 0
-class Subtraction(Addition):
+class Subtraction(Base):
     def __init__(self):
         self.new_prob()
     def new_prob(self):
@@ -335,18 +334,18 @@ class Subtraction(Addition):
         self._question = (str(C)+" - "+str(A)+" = ?") #generates string version of problem
         self._solution = B #generates correct answer
 
-# Multiplication question object is a subclass of Addition
+# Multiplication is a subclass of Base
 # Generates a random multiplication problem with int product > 0
-class Multiplication(Addition):
+class Multiplication(Base):
     def new_prob(self):
         A = random.randint(1,10)
         B = random.randint(1,10)
         self._question = (str(A)+" x "+str(B)+" = ?") #generates string version of problem
         self._solution = A*B #generates correct answer
 
-# Division question object is a subclass of Addition
-# Generates a random division problem with 
-class Division(Addition):
+# Division is a subclass of Base
+# Generates a random division problem with int solution > 0
+class Division(Base):
     def new_prob(self):
         A = random.randint(1,10)
         B = random.randint(1,10)
@@ -354,11 +353,15 @@ class Division(Addition):
         self._question = (str(C)+" / "+str(A)+" = ?") #generates string version of problem
         self._solution = B #generates correct answer
 
+# Player class has 3 attributes:
+#   score, name, total
+# 2 methods:
+#   correct, wrong
 class Player:
     def __init__(self,name='-'):
         self.__score = 0 # number of correct
         self.__totalQuestions = 0 # total number of questions attempted
-        self.__name = name
+        self.__name = name # player name
 
     @property
     def score(self):
