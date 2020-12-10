@@ -3,6 +3,7 @@ math-game is the final assignent for CS119, with tkinter implementation. The goa
 
 ## How to play
 ![Intro Screen](https://user-images.githubusercontent.com/36248744/101718535-412d0500-3a56-11eb-9cee-2af69bd9526e.PNG)
+
 Enter a name to begin playing!
 
 ## Credits
