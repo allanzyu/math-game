@@ -4,7 +4,7 @@ math-game is the final assignent for CS119, with tkinter implementation. The goa
 ## How to play
 ![Intro Screen](https://user-images.githubusercontent.com/36248744/101718535-412d0500-3a56-11eb-9cee-2af69bd9526e.PNG)
 
-Enter a name to begin playing!
+Enter a name to begin a game. This will be the name of the player's profile when it comes to saving/loading scores and statistics.
 
 ## Credits
 Professor Luis Flores for teaching CS119 and helping me get up to speed with python quickly!
